@@ -157,7 +157,7 @@ nav a:hover{color:var(--cyan)}
 
 .hero{
   position: relative;
-  min-height:100vh;
+  min-height:80vh;
   text-align:center;
   background:
     radial-gradient(circle at center, rgba(0,180,255,.25), transparent 60%),
@@ -168,7 +168,7 @@ nav a:hover{color:var(--cyan)}
     rgba(0,0,0,.95) 80%,
     #050505 100%
   ),
-  url("https://images.unsplash.com/photo-1519671482749-fd09be7ccebf") center/cover no-repeat;
+  url("img/herobg.jpg") center/cover no-repeat;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -313,13 +313,12 @@ nav a:hover{color:var(--cyan)}
 }
 
 .hero-photo img {
-  width: 275px;
-  height: 450px;
+  width: 290px;
+  height: 550px;
   object-fit: cover;
   border-radius: 12px;
 
   /* cyberpunk look */
-  border: 2px solid #00e5ff;
   box-shadow:
     0 0 20px rgba(0,229,255,0.6),
     0 0 60px rgba(0,229,255,0.3);
@@ -459,7 +458,7 @@ nav a:hover{color:var(--cyan)}
 }
 
 .section{
-  padding: 4rem 4rem;
+  padding: 1rem 4rem;
   background: transparent;
   color: #e5e7eb;
 }
@@ -618,7 +617,7 @@ h2 span{
 
 .glow-card{
   background:#0f0f0f;
-  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border:1px solid rgba(0,180,255,.45);
   border-radius:10px;
   padding:26px;

@@ -85,30 +85,40 @@ document.querySelectorAll('.hero-icons i').forEach((icon, i) => {
 /* ================================
    Terminal typing effect (ALL + cursor safe)
 ================================ */
+/* ================================
+   Terminal typing effect (looped)
+================================ */
 document.querySelectorAll('.terminal').forEach((terminal, index) => {
   const cursor = terminal.querySelector('.blink');
-
-  // Get text WITHOUT the cursor
   const text = terminal.textContent.replace('█', '').trim();
 
-  // Clear terminal but keep cursor
-  terminal.textContent = '';
-  if (cursor) terminal.appendChild(cursor);
+  function startTyping() {
+    // Clear text but keep cursor
+    terminal.textContent = '';
+    if (cursor) terminal.appendChild(cursor);
 
-  let i = 0;
+    let i = 0;
 
-  function type() {
-    if (i < text.length) {
-      terminal.insertBefore(
-        document.createTextNode(text.charAt(i)),
-        cursor
-      );
-      i++;
-      setTimeout(type, 35);
+    function type() {
+      if (i < text.length) {
+        terminal.insertBefore(
+          document.createTextNode(text.charAt(i)),
+          cursor
+        );
+        i++;
+        setTimeout(type, 35);
+      }
     }
+
+    type();
   }
 
-  setTimeout(type, 400 + index * 300);
+  // Initial start
+  setTimeout(startTyping, 400 + index * 300);
+
+  // Repeat every 8 seconds
+  setInterval(startTyping, 6000);
 });
+
 
 
