@@ -181,8 +181,15 @@ nav a:hover{color:var(--cyan)}
     min-height:100vh;
     padding:0 20px;
     background-position:center;
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(0,0,0,.7),
+        rgba(0,0,0,.95)
+      ),
+      url("img/mediabg.png") center/cover no-repeat;
   }
-}
+  }
 
 .hero::after{
   content:"";
@@ -1799,6 +1806,13 @@ footer .heart{color:#ff0044}
   .hero{
     padding:0 18px !important;
     gap:10px !important;
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(0,0,0,.7),
+        rgba(0,0,0,.95)
+      ),
+      url("img/mediabg.png") center/cover no-repeat;
   }
   
   .hero h1{
@@ -2208,6 +2222,13 @@ footer .heart{color:#ff0044}
     padding:0 14px !important;
     gap:6px !important;
     min-height:95vh !important;
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(0,0,0,.7),
+        rgba(0,0,0,.95)
+      ),
+      url("img/mediabg.png") center/cover no-repeat;
   }
   
   .hero h1{

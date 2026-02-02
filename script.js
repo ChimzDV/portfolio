@@ -81,43 +81,69 @@ document.querySelectorAll('.hero-icons i').forEach((icon, i) => {
   icon.style.animation = `float 4s ease-in-out ${i * 0.3}s infinite`;
 });
 
-
-/* ================================
-   Terminal typing effect (ALL + cursor safe)
-================================ */
 /* ================================
    Terminal typing effect (looped)
 ================================ */
 document.querySelectorAll('.terminal').forEach((terminal, index) => {
   const cursor = terminal.querySelector('.blink');
-  const text = terminal.textContent.replace('█', '').trim();
+  const originalText = terminal.textContent.replace('█', '').trim();
+
+  let typingTimeout = null;
+  let loopInterval = null;
+  let isTyping = false;
+
+  function clearTimers() {
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+      typingTimeout = null;
+    }
+    if (loopInterval) {
+      clearInterval(loopInterval);
+      loopInterval = null;
+    }
+    isTyping = false;
+  }
 
   function startTyping() {
-    // Clear text but keep cursor
+    if (isTyping) return; // prevent overlap
+    isTyping = true;
+
+    clearTimers();
+
     terminal.textContent = '';
     if (cursor) terminal.appendChild(cursor);
 
     let i = 0;
 
     function type() {
-      if (i < text.length) {
+      if (i < originalText.length) {
         terminal.insertBefore(
-          document.createTextNode(text.charAt(i)),
+          document.createTextNode(originalText.charAt(i)),
           cursor
         );
         i++;
-        setTimeout(type, 35);
+        typingTimeout = setTimeout(type, 35);
+      } else {
+        isTyping = false;
       }
     }
 
     type();
+
+    loopInterval = setInterval(startTyping, 6000);
   }
 
-  // Initial start
+  // Initial delayed start
   setTimeout(startTyping, 400 + index * 300);
 
-  // Repeat every 8 seconds
-  setInterval(startTyping, 6000);
+  // 🔑 Visibility handling (THIS fixes your bug)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      clearTimers();
+    } else {
+      startTyping();
+    }
+  });
 });
 
 
