@@ -1804,7 +1804,7 @@ footer .heart{color:#ff0044}
 
   /* Hero */
   .hero{
-    padding:0 18px !important;
+    padding:40px 18px !important;
     gap:10px !important;
     background:
       linear-gradient(
