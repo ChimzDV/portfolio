@@ -1394,7 +1394,7 @@ footer .heart{color:#ff0044}
   display: flex;
   gap: 18px;
   justify-content: center;
-  margin-top: 50px;
+  margin-top: 65px;
 }
 
 @media(max-width:480px){
@@ -1950,7 +1950,7 @@ footer .heart{color:#ff0044}
   }
   
   .glow-card li{
-    padding-left:14px !important;
+    padding-left:20px !important;
   }
   
   .glow-card li::before{
@@ -2354,7 +2354,7 @@ footer .heart{color:#ff0044}
   }
   
   .glow-card li{
-    padding-left:12px !important;
+    padding-left:20px !important;
     margin-bottom:4px !important;
   }
   
@@ -2526,7 +2526,7 @@ footer .heart{color:#ff0044}
   .interest-panel li{
     font-size:10px !important;
     margin:4px 0 !important;
-    padding-left:12px !important;
+    padding-left:18px !important;
   }
   
   .response-panel{
