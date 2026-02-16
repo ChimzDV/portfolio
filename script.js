@@ -148,3 +148,118 @@ document.querySelectorAll('.terminal').forEach((terminal, index) => {
 
 
 
+/* ================================
+   Preloader hide / remove
+================================ */
+(function(){
+  const pre = document.getElementById('preloader');
+  if(!pre) return;
+  // prevent scroll while loading
+  document.documentElement.style.overflow = 'hidden';
+
+  const minDisplay = 2000; // minimum ms to show preloader
+  const start = Date.now();
+  let hidden = false;
+
+  function doHide(){
+    if(hidden) return;
+    hidden = true;
+    document.documentElement.style.overflow = '';
+    pre.classList.add('preloader--hide');
+    setTimeout(()=>{ if(pre && pre.parentNode) pre.parentNode.removeChild(pre); }, 900);
+  }
+
+  function hidePreloader(){
+    const elapsed = Date.now() - start;
+    const remaining = minDisplay - elapsed;
+    if(remaining > 0){
+      setTimeout(doHide, remaining);
+    } else {
+      doHide();
+    }
+  }
+
+  // --- dynamic preloader content: falling icons + typing signature ---
+  const iconsContainer = pre.querySelector('.falling-icons');
+  const sigNameEl = pre.querySelector('.sig-name');
+  const sigCursor = pre.querySelector('.sig-cursor');
+
+  const iconList = ['fa-terminal','fa-code','fa-gear','fa-shield-halved','fa-bolt','fa-gamepad'];
+  let iconInterval = null;
+  let spawnTimeouts = [];
+  let typingTimer = null;
+
+  function spawnIcon(){
+    if(!iconsContainer) return;
+    const i = document.createElement('i');
+    const ic = iconList[Math.floor(Math.random()*iconList.length)];
+    i.className = `fa-solid ${ic} fall-icon`;
+    const left = Math.random()*100;
+    const size = 10 + Math.random()*24;
+    const duration = 2200 + Math.random()*2600; // 2.2s - 4.8s
+    i.style.left = left + '%';
+    i.style.fontSize = `${size}px`;
+    i.style.animation = `fall ${duration}ms linear forwards`;
+    i.style.opacity = 0;
+    iconsContainer.appendChild(i);
+
+    const removeT = setTimeout(()=>{
+      if(i && i.parentNode) i.parentNode.removeChild(i);
+    }, duration + 200);
+    spawnTimeouts.push(removeT);
+  }
+
+  function startSpawning(){
+    if(!iconsContainer) return;
+    iconInterval = setInterval(spawnIcon, 240);
+    // create a few initial icons
+    for(let j=0;j<6;j++){ spawnIcon(); }
+  }
+
+  function stopSpawning(){
+    if(iconInterval) clearInterval(iconInterval);
+    spawnTimeouts.forEach(t=>clearTimeout(t));
+    spawnTimeouts = [];
+    if(iconsContainer) iconsContainer.innerHTML = '';
+  }
+
+  // typing signature
+  const signature = 'CHIMWEMWE';
+  function startTyping(){
+    if(!sigNameEl) return;
+    sigNameEl.textContent = '';
+    let idx = 0;
+    typingTimer = setInterval(()=>{
+      sigNameEl.textContent += signature.charAt(idx);
+      idx++;
+      if(idx >= signature.length){
+        clearInterval(typingTimer);
+        typingTimer = null;
+      }
+    }, 120);
+  }
+
+  // start animations immediately
+  startSpawning();
+  setTimeout(startTyping, 500);
+
+  window.addEventListener('load', () => {
+    hidePreloader();
+  });
+
+  // safety fallback in case load doesn't fire
+  setTimeout(()=>{ if(!hidden) hidePreloader(); }, 7000);
+
+  // ensure cleanup on hide
+  const origDoHide = doHide;
+  doHide = function(){
+    stopSpawning();
+    if(typingTimer) clearInterval(typingTimer);
+    if(sigNameEl) sigNameEl.textContent = signature; // ensure full name shown
+    if(sigCursor) sigCursor.style.display = 'none';
+    origDoHide();
+  };
+})();
+
+
+

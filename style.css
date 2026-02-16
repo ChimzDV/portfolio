@@ -5,6 +5,70 @@
   --cyan:#00eaff;
   --blue:#0077ff;
 }
+
+/* Preloader styles - cyberpunk grey & blue theme */
+#preloader{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(180deg,#0a0a0c 0%, #070709 60%);
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.preloader-screen{
+  text-align:center;
+  color:#bfefff;
+  padding:28px 36px;
+  max-width:720px;
+  width:90%;
+}
+.logo-pre{font-family:'Orbitron',sans-serif;font-weight:800;font-size:22px;letter-spacing:3px;color:#cfefff;margin-bottom:18px}
+.logo-pre i{color:var(--cyan);margin-right:8px}
+.cyber-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,0,0,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.15) 1px, transparent 1px);background-size:100% 8px, 8px 100%;opacity:0.06;pointer-events:none}
+.cyber-spinner{position:relative;height:120px;width:120px;margin:14px auto 8px}
+.cyber-spinner .ring{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 24px rgba(0,170,255,0.18), inset 0 0 18px rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.12)}
+.cyber-spinner .ring-1{transform:scale(1);border-color:rgba(0,230,255,0.22)}
+.cyber-spinner .ring-2{transform:scale(.72);border-color:rgba(0,170,255,0.18);filter:blur(.6px)}
+.cyber-spinner .ring-3{transform:scale(.44);border-color:rgba(0,120,255,0.14);opacity:0.95}
+.cyber-spinner .ring{animation:spin 2.6s linear infinite}
+.cyber-spinner .ring-2{animation-direction:reverse;animation-duration:3.4s}
+.cyber-spinner .ring-3{animation-duration:4.2s}
+@keyframes spin{from{transform:rotate(0deg) translateZ(0) scale(var(--s,1))}to{transform:rotate(360deg) translateZ(0) scale(var(--s,1))}}
+.loading-text{font-family:'JetBrains Mono',monospace;color:#9fdfff;margin-top:10px;letter-spacing:2px}
+.loading-text .dots{display:inline-block;animation:dots 1s steps(4, end) infinite}
+@keyframes dots{0%{content:"";opacity:0.6}25%{opacity:1}50%{opacity:0.8}100%{opacity:0.6}}
+
+/* scanline / flicker */
+.preloader::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 10%, rgba(0,170,255,0.02) 50%, transparent 60%, rgba(255,255,255,0.02) 100%);
+  mix-blend-mode:overlay;
+  pointer-events:none
+}
+
+/* hide animation */
+.preloader--hide{opacity:0;visibility:hidden;transition:opacity .6s ease, visibility 1s step-end}
+
+/* falling icons */
+.falling-icons{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.falling-icons i{position:absolute;top:-40px;color:var(--cyan);text-shadow:0 0 12px rgba(0,230,255,0.6);opacity:0.95;transform:translateY(-10vh) rotate(0deg);will-change:transform,opacity}
+@keyframes fall {
+  0%{transform:translateY(-10vh) rotate(0deg);opacity:0}
+  10%{opacity:1}
+  100%{transform:translateY(120vh) rotate(480deg);opacity:0}
+}
+
+/* signature */
+.signature{font-family:'Orbitron',sans-serif;color:#bfefff;margin-top:12px;letter-spacing:2px;font-size:14px}
+.sig-name{color:var(--cyan);margin-left:6px}
+.sig-cursor{display:inline-block;margin-left:6px;color:var(--cyan);opacity:1;animation:blink 0.9s steps(2,end) infinite}
+
+
 *{box-sizing:border-box}
 body{
   margin:0;
