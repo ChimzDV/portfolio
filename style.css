@@ -771,9 +771,9 @@ footer .heart{color:#ff0044}
   padding:10px 95px;
   text-align:center;
   background:linear-gradient(180deg,#0a0a0a,#050505);
-  border:1px solid rgba(0,240,255,.25);
+  /* border:1px solid rgba(0,240,255,.25); */
   border-radius:16px;
-  box-shadow:0 0 40px rgba(0,240,255,.25);
+  /* box-shadow:0 0 40px rgba(0,240,255,.25); */
 }
 
 .collab-cta h3{
