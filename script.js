@@ -65,14 +65,39 @@ window.addEventListener('scroll', () => {
   const current = window.scrollY;
 
   if (current > lastScroll && current > 120) {
-    navbar.style.transform = 'translateY(-100%)';
+    navbar.style.transform = 'translateY(-50%, -100%)';
   } else {
-    navbar.style.transform = 'translateY(0)';
+    navbar.style.transform = 'translateY(-50%, 0)';
   }
 
   lastScroll = current;
 });
 
+/* ================================
+   Navbar expand at footer
+================================ */
+const footer = document.querySelector('.site-footer');
+
+window.addEventListener('scroll', () => {
+  const footerTop = footer.getBoundingClientRect().top;
+  const screenHeight = window.innerHeight;
+
+  if (footerTop < screenHeight) {
+    navbar.classList.add('expand');
+  } else {
+    navbar.classList.remove('expand');
+  }
+});
+
+const nav = document.querySelector('.navbar');
+
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 120) {
+    nav.classList.add('scrolled');
+  } else {
+    nav.classList.remove('scrolled');
+  }
+});
 
 /* ================================
    Hero icon floating animation
