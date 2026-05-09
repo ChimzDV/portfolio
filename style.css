@@ -2865,4 +2865,22 @@ footer .heart {
   .exp-bullets li {
     font-size: 0.85rem;
   }
+
+  .navbar {
+    bottom: 25px;
+    padding: 10px 12px;
+  }
+
+  .navbar.scrolled {
+    bottom: 25px;
+    padding: 10px 12px;
+  }
+
+  .navbar.expand {
+    bottom: 115px;
+    width: 100%;
+    border-radius: 50px;
+    padding: 10px 20px;
+    max-width: 420px;
+  }
 }
