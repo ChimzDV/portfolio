@@ -48,10 +48,29 @@ const observer = new IntersectionObserver(
 );
 
 document.querySelectorAll(
-  '.section, .project-card, .glow-card, .exp-card, .education-card'
-).forEach(el => {
+  '.section, .project-card, .glow-card, .exp-item, .education-card, .premium-glass-card'
+).forEach((el, i) => {
   el.classList.add('reveal');
+  // Add stagger delay for experience items
+  if (el.classList.contains('exp-item')) {
+    el.style.transitionDelay = `${(i % 5) * 0.15}s`;
+  }
   observer.observe(el);
+});
+
+const expObserver = new IntersectionObserver(
+  entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  },
+  { threshold: 0.2 }
+);
+
+document.querySelectorAll('.exp-item').forEach(item => {
+  expObserver.observe(item);
 });
 
 
