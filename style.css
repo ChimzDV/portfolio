@@ -2426,7 +2426,7 @@ footer .heart {
   .education-grid {
     grid-template-columns: 1fr !important;
     gap: 25px;
-    width: 100%;
+    width: 95%;
   }
 
   /* About Grid Stacking */
@@ -2734,29 +2734,44 @@ footer .heart {
   }
 
   .project-item {
-    height: auto !important;
-    min-height: 420px;
-    display: flex;
-    flex-direction: column;
+    height: 450px !important;
+    display: block;
+    position: relative;
     overflow: hidden;
   }
 
   .project-image-container {
-    position: relative;
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: 220px;
+    height: 100%;
+    z-index: 1;
   }
 
   .project-content {
-    position: relative;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     width: 100%;
-    padding: 20px;
-    background: rgba(18, 22, 28, 0.95);
+    padding: 24px;
+    background: linear-gradient(to top, rgba(11, 15, 20, 0.98) 40%, rgba(11, 15, 20, 0.4) 70%, transparent 100%);
+    z-index: 3;
     transform: none !important;
-    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-end;
+  }
+
+  .project-content h3 {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+  }
+
+  .project-content p {
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    opacity: 0.8;
   }
 
   .project-item:hover .project-content {
