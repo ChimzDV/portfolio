@@ -305,5 +305,318 @@ document.querySelectorAll('.terminal').forEach((terminal, index) => {
   };
 })();
 
+/* ================================
+   Experience Infinite Auto-Carousel & Drag/Swipe Controller
+================================ */
+(function initExperienceCarousel() {
+  const container = document.querySelector('.experience-timeline-container');
+  const track = document.querySelector('.experience-list');
+  if (!container || !track) return;
+
+  // Clone items dynamically once for infinite seamless loop
+  const originalItems = Array.from(track.querySelectorAll('.exp-item'));
+  if (originalItems.length > 0) {
+    originalItems.forEach(item => {
+      const clone = item.cloneNode(true);
+      clone.classList.add('cloned-item');
+      track.appendChild(clone);
+    });
+  }
+
+  let isHovered = false;
+  let isDragging = false;
+  let startX = 0;
+  let startScrollLeft = 0;
+  let dragMovedDistance = 0;
+  let autoAnimId = null;
+  const speed = 0.5; // slow smooth movement per frame
+
+  function getHalfScrollWidth() {
+    return track.scrollWidth / 2;
+  }
+
+  function loopBoundaryCheck() {
+    const halfWidth = getHalfScrollWidth();
+    if (halfWidth <= 0) return;
+
+    if (track.scrollLeft >= halfWidth) {
+      track.scrollLeft -= halfWidth;
+    } else if (track.scrollLeft <= 0) {
+      track.scrollLeft += halfWidth;
+    }
+  }
+
+  function autoScrollLoop() {
+    if (!isHovered && !isDragging) {
+      track.scrollLeft += speed;
+      loopBoundaryCheck();
+    }
+    autoAnimId = requestAnimationFrame(autoScrollLoop);
+  }
+
+  autoAnimId = requestAnimationFrame(autoScrollLoop);
+
+  // Hover & Focus Pause & Resume
+  container.addEventListener('mouseenter', () => { isHovered = true; });
+  container.addEventListener('mouseleave', () => {
+    isHovered = false;
+    isDragging = false;
+  });
+  container.addEventListener('focusin', () => { isHovered = true; });
+  container.addEventListener('focusout', () => { isHovered = false; });
+
+  // Dragging & Touch Swiping
+  function startDrag(e) {
+    isDragging = true;
+    dragMovedDistance = 0;
+    startX = e.pageX || (e.touches && e.touches[0].pageX) || 0;
+    startScrollLeft = track.scrollLeft;
+  }
+
+  function moveDrag(e) {
+    if (!isDragging) return;
+    const currentX = e.pageX || (e.touches && e.touches[0].pageX) || 0;
+    const diff = currentX - startX;
+    dragMovedDistance = Math.abs(diff);
+    track.scrollLeft = startScrollLeft - diff;
+    loopBoundaryCheck();
+  }
+
+  function stopDrag() {
+    isDragging = false;
+  }
+
+  track.addEventListener('mousedown', startDrag);
+  window.addEventListener('mousemove', moveDrag);
+  window.addEventListener('mouseup', stopDrag);
+
+  track.addEventListener('touchstart', startDrag, { passive: true });
+  track.addEventListener('touchmove', moveDrag, { passive: true });
+  track.addEventListener('touchend', stopDrag);
+
+  // Prevent link click when dragging
+  track.addEventListener('click', (e) => {
+    if (dragMovedDistance > 5) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, true);
+})();
+
+
+/* ================================
+   3D Coverflow Projects Showcase Controller
+================================ */
+(function init3DCoverflowProjects() {
+  const stage = document.querySelector('.projects-coverflow-stage');
+  const track = document.querySelector('.projects-coverflow-track');
+  const cards = Array.from(document.querySelectorAll('.project-card-3d'));
+  const dotsContainer = document.querySelector('.coverflow-pagination-dots');
+  const prevSideBtn = document.querySelector('.coverflow-side-btn.prev-btn');
+  const nextSideBtn = document.querySelector('.coverflow-side-btn.next-btn');
+  const prevSmBtn = document.querySelector('.coverflow-nav-arrow.nav-prev-sm');
+  const nextSmBtn = document.querySelector('.coverflow-nav-arrow.nav-next-sm');
+
+  if (!stage || !track || cards.length === 0) return;
+
+  let currentIndex = 0; // Center focused card index (starts at 0 - TalentIQ Staffing)
+  let isHovered = false;
+  let isDragging = false;
+  let startX = 0;
+  let dragDistance = 0;
+  let autoTimer = null;
+
+  // Render pagination dot capsules dynamically
+  if (dotsContainer) {
+    dotsContainer.innerHTML = '';
+    cards.forEach((_, idx) => {
+      const dot = document.createElement('div');
+      dot.className = `dot-capsule ${idx === currentIndex ? 'active' : ''}`;
+      dot.setAttribute('aria-label', `Go to project ${idx + 1}`);
+      dot.addEventListener('click', () => {
+        setIndex(idx);
+      });
+      dotsContainer.appendChild(dot);
+    });
+  }
+
+  function updatePaginationDots() {
+    if (!dotsContainer) return;
+    const dots = dotsContainer.querySelectorAll('.dot-capsule');
+    dots.forEach((dot, idx) => {
+      if (idx === currentIndex) {
+        dot.classList.add('active');
+      } else {
+        dot.classList.remove('active');
+      }
+    });
+  }
+
+  // Update 3D Coverflow Positions with Continuous Circular Wrapping & Mobile Depth Blur
+  function updateCoverflow() {
+    const isMobile = window.innerWidth <= 900;
+    const isSmallMobile = window.innerWidth <= 480;
+    const gap = isSmallMobile ? 190 : (isMobile ? 220 : 320);
+    const total = cards.length;
+
+    cards.forEach((card, idx) => {
+      let diff = idx - currentIndex;
+
+      // Circular shortest-distance wrap for infinite continuous flow
+      while (diff > total / 2) diff -= total;
+      while (diff < -total / 2) diff += total;
+
+      card.classList.remove('active-card');
+
+      if (diff === 0) {
+        // Active Center Card: 100% sharp, bright, in-focus, full opacity & contrast
+        card.classList.add('active-card');
+        card.style.transform = `translateX(0) scale(1) rotateY(0deg) translateZ(0px)`;
+        card.style.opacity = '1';
+        card.style.zIndex = '10';
+        card.style.pointerEvents = 'auto';
+        if (isMobile) {
+          card.style.filter = 'none';
+        } else {
+          card.style.filter = '';
+        }
+      } else if (diff < 0) {
+        // Left Side Cards: blurred, dimmed, reduced contrast and opacity on mobile
+        const absDiff = Math.abs(diff);
+        const translateX = diff * gap;
+        const rotateY = isMobile ? Math.min(18, absDiff * 12) : Math.min(24, absDiff * 18);
+        const scale = isMobile ? Math.max(0.72, 1 - absDiff * 0.15) : Math.max(0.65, 1 - absDiff * 0.14);
+        const opacity = isMobile ? Math.max(0.18, 0.6 - (absDiff - 1) * 0.25) : Math.max(0, 0.85 - (absDiff - 1) * 0.35);
+        const zIndex = 10 - absDiff;
+        const blurAmount = isMobile ? Math.min(6, 2.5 + (absDiff - 1) * 1.8) : 0;
+        const brightness = isMobile ? Math.max(0.48, 0.68 - (absDiff - 1) * 0.15) : 1;
+        const contrast = isMobile ? 0.9 : 1;
+
+        card.style.transform = `translateX(${translateX}px) scale(${scale}) rotateY(${rotateY}deg) translateZ(${-absDiff * (isMobile ? 60 : 80)}px)`;
+        card.style.opacity = opacity <= 0.05 ? '0' : `${opacity}`;
+        card.style.zIndex = `${zIndex}`;
+        card.style.pointerEvents = 'auto';
+        if (isMobile) {
+          card.style.filter = `blur(${blurAmount}px) brightness(${brightness}) contrast(${contrast})`;
+        } else {
+          card.style.filter = '';
+        }
+      } else {
+        // Right Side Cards: blurred, dimmed, reduced contrast and opacity on mobile
+        const translateX = diff * gap;
+        const rotateY = isMobile ? -Math.min(18, diff * 12) : -Math.min(24, diff * 18);
+        const scale = isMobile ? Math.max(0.72, 1 - diff * 0.15) : Math.max(0.65, 1 - diff * 0.14);
+        const opacity = isMobile ? Math.max(0.18, 0.6 - (diff - 1) * 0.25) : Math.max(0, 0.85 - (diff - 1) * 0.35);
+        const zIndex = 10 - diff;
+        const blurAmount = isMobile ? Math.min(6, 2.5 + (diff - 1) * 1.8) : 0;
+        const brightness = isMobile ? Math.max(0.48, 0.68 - (diff - 1) * 0.15) : 1;
+        const contrast = isMobile ? 0.9 : 1;
+
+        card.style.transform = `translateX(${translateX}px) scale(${scale}) rotateY(${rotateY}deg) translateZ(${-diff * (isMobile ? 60 : 80)}px)`;
+        card.style.opacity = opacity <= 0.05 ? '0' : `${opacity}`;
+        card.style.zIndex = `${zIndex}`;
+        card.style.pointerEvents = 'auto';
+        if (isMobile) {
+          card.style.filter = `blur(${blurAmount}px) brightness(${brightness}) contrast(${contrast})`;
+        } else {
+          card.style.filter = '';
+        }
+      }
+    });
+
+    updatePaginationDots();
+  }
+
+  function setIndex(index) {
+    const total = cards.length;
+    currentIndex = ((index % total) + total) % total;
+    updateCoverflow();
+  }
+
+  // Click on card to activate it
+  cards.forEach((card, idx) => {
+    card.addEventListener('click', (e) => {
+      if (dragDistance > 8) return;
+      if (idx !== currentIndex) {
+        e.preventDefault();
+        setIndex(idx);
+      }
+    });
+  });
+
+  // Controls
+  if (prevSideBtn) prevSideBtn.addEventListener('click', () => setIndex(currentIndex - 1));
+  if (nextSideBtn) nextSideBtn.addEventListener('click', () => setIndex(currentIndex + 1));
+  if (prevSmBtn) prevSmBtn.addEventListener('click', () => setIndex(currentIndex - 1));
+  if (nextSmBtn) nextSmBtn.addEventListener('click', () => setIndex(currentIndex + 1));
+
+  // Keyboard navigation when stage focused or hovered
+  window.addEventListener('keydown', (e) => {
+    if (!isHovered) return;
+    if (e.key === 'ArrowLeft') setIndex(currentIndex - 1);
+    if (e.key === 'ArrowRight') setIndex(currentIndex + 1);
+  });
+
+  // Mouse / Touch Dragging & Swiping
+  function onDragStart(e) {
+    isDragging = true;
+    dragDistance = 0;
+    startX = e.pageX || (e.touches && e.touches[0].pageX) || 0;
+  }
+
+  function onDragMove(e) {
+    if (!isDragging) return;
+    const currentX = e.pageX || (e.touches && e.touches[0].pageX) || 0;
+    const diff = currentX - startX;
+    dragDistance = Math.abs(diff);
+
+    if (dragDistance > 55) {
+      if (diff > 0) {
+        setIndex(currentIndex - 1);
+      } else {
+        setIndex(currentIndex + 1);
+      }
+      isDragging = false;
+    }
+  }
+
+  function onDragEnd() {
+    isDragging = false;
+  }
+
+  track.addEventListener('mousedown', onDragStart);
+  window.addEventListener('mousemove', onDragMove);
+  window.addEventListener('mouseup', onDragEnd);
+
+  track.addEventListener('touchstart', onDragStart, { passive: true });
+  track.addEventListener('touchmove', onDragMove, { passive: true });
+  track.addEventListener('touchend', onDragEnd);
+
+  // Auto Advance Loop (idle timer)
+  function startAutoAdvance() {
+    stopAutoAdvance();
+    autoTimer = setInterval(() => {
+      if (!isHovered && !isDragging) {
+        setIndex(currentIndex + 1);
+      }
+    }, 4500);
+  }
+
+  function stopAutoAdvance() {
+    if (autoTimer) {
+      clearInterval(autoTimer);
+      autoTimer = null;
+    }
+  }
+
+  stage.addEventListener('mouseenter', () => { isHovered = true; });
+  stage.addEventListener('mouseleave', () => { isHovered = false; });
+  window.addEventListener('resize', updateCoverflow);
+
+  // Initialize
+  updateCoverflow();
+  startAutoAdvance();
+})();
+
 
 
